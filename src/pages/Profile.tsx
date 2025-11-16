@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { formatPrice } from "@/utils/currency";
 
 const Profile = () => {
   const [user] = useState({
@@ -122,7 +123,7 @@ const Profile = () => {
                       <p className="text-sm text-muted-foreground">
                         Order #{order.id} • {new Date(order.date).toLocaleDateString()}
                       </p>
-                      <p className="text-sm mt-1">Total: ${order.total.toFixed(2)}</p>
+                      <p className="text-sm mt-1">Total: {formatPrice(order.total)}</p>
                     </div>
                     <div className="flex flex-col gap-2">
                       <Badge variant="secondary">{order.status}</Badge>

@@ -3,6 +3,7 @@ import { Clock, Star, DollarSign } from "lucide-react";
 import { Restaurant } from "@/types";
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
+import { formatPrice } from "@/utils/currency";
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -54,12 +55,12 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
             
             <div className="flex items-center gap-1">
               <DollarSign className="h-4 w-4" />
-              <span>${restaurant.deliveryFee}</span>
+              <span>{formatPrice(restaurant.deliveryFee)}</span>
             </div>
           </div>
           
           <div className="mt-2 text-xs text-muted-foreground">
-            Min. order: ${restaurant.minimumOrder}
+            Min. order: {formatPrice(restaurant.minimumOrder)}
           </div>
         </CardContent>
       </Card>

@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { useCart } from "@/contexts/CartContext";
+import { formatPrice } from "@/utils/currency";
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -43,7 +44,7 @@ const MenuItemCard = ({ item }: MenuItemCardProps) => {
           
           <div className="flex items-center justify-between">
             <span className="text-lg font-bold text-primary">
-              ${item.price.toFixed(2)}
+              {formatPrice(item.price)}
             </span>
             <Button
               size="sm"
