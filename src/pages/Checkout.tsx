@@ -9,15 +9,23 @@ import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { formatPrice } from "@/utils/currency";
 
 const Checkout = () => {
   const { cart, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [deliveryDetails, setDeliveryDetails] = useState({
+    street: "",
+    apt: "",
+    city: "",
+    zip: "",
+    instructions: ""
+  });
 
-  const deliveryFee = 3.99;
-  const tax = cartTotal * 0.08;
+  const deliveryFee = 49;
+  const tax = cartTotal * 0.05;
   const total = cartTotal - discount + deliveryFee + tax;
 
   const handleApplyPromo = () => {
@@ -32,6 +40,12 @@ const Checkout = () => {
   const handlePlaceOrder = () => {
     if (cart.length === 0) {
       toast.error("Your cart is empty");
+      return;
+    }
+
+    // Validate delivery details
+    if (!deliveryDetails.street || !deliveryDetails.city || !deliveryDetails.zip) {
+      toast.error("Please fill in all required delivery details");
       return;
     }
 
@@ -75,7 +89,7 @@ const Checkout = () => {
                     />
                     <div className="flex-1">
                       <h4 className="font-semibold">{item.name}</h4>
-                      <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
+                      <p className="text-sm text-muted-foreground">{formatPrice(item.price)}</p>
                       <div className="flex items-center gap-2 mt-2">
                         {item.dietary.map((tag) => (
                           <Badge key={tag} variant="outline" className="text-xs">
@@ -123,25 +137,53 @@ const Checkout = () => {
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="street">Street Address</Label>
-                    <Input id="street" placeholder="123 Main St" />
+                    <Label htmlFor="street">Street Address *</Label>
+                    <Input 
+                      id="street" 
+                      placeholder="123 Main St" 
+                      value={deliveryDetails.street}
+                      onChange={(e) => setDeliveryDetails({...deliveryDetails, street: e.target.value})}
+                      required
+                    />
                   </div>
                   <div>
                     <Label htmlFor="apt">Apt/Suite</Label>
-                    <Input id="apt" placeholder="Apt 4B" />
+                    <Input 
+                      id="apt" 
+                      placeholder="Apt 4B" 
+                      value={deliveryDetails.apt}
+                      onChange={(e) => setDeliveryDetails({...deliveryDetails, apt: e.target.value})}
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="city">City</Label>
-                    <Input id="city" placeholder="New York" />
+                    <Label htmlFor="city">City *</Label>
+                    <Input 
+                      id="city" 
+                      placeholder="Mumbai" 
+                      value={deliveryDetails.city}
+                      onChange={(e) => setDeliveryDetails({...deliveryDetails, city: e.target.value})}
+                      required
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="zip">ZIP Code</Label>
-                    <Input id="zip" placeholder="10001" />
+                    <Label htmlFor="zip">PIN Code *</Label>
+                    <Input 
+                      id="zip" 
+                      placeholder="400001" 
+                      value={deliveryDetails.zip}
+                      onChange={(e) => setDeliveryDetails({...deliveryDetails, zip: e.target.value})}
+                      required
+                    />
                   </div>
                 </div>
                 <div>
                   <Label htmlFor="instructions">Delivery Instructions (Optional)</Label>
-                  <Input id="instructions" placeholder="Ring doorbell twice" />
+                  <Input 
+                    id="instructions" 
+                    placeholder="Ring doorbell twice" 
+                    value={deliveryDetails.instructions}
+                    onChange={(e) => setDeliveryDetails({...deliveryDetails, instructions: e.target.value})}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -182,26 +224,26 @@ const Checkout = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${cartTotal.toFixed(2)}</span>
+                    <span>{formatPrice(cartTotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Delivery Fee</span>
-                    <span>${deliveryFee.toFixed(2)}</span>
+                    <span>{formatPrice(deliveryFee)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Tax</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span className="text-muted-foreground">GST (5%)</span>
+                    <span>{formatPrice(tax)}</span>
                   </div>
                   {discount > 0 && (
                     <div className="flex justify-between text-sm text-secondary">
                       <span>Discount</span>
-                      <span>-${discount.toFixed(2)}</span>
+                      <span>-{formatPrice(discount)}</span>
                     </div>
                   )}
                   <Separator />
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>{formatPrice(total)}</span>
                   </div>
                 </div>
 
